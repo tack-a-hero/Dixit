@@ -645,7 +645,7 @@ function artGrid(ids,mode){
  }).join('')}</div>`;
 }
 function home(){return `<section class="title-scene"><div class="title-block"><h1 class="h1 wordmark">Dixit</h1><p class="title-line">ひとつのヒントから、<br>いくつもの物語を。</p><div class="title-acts hero-actions">${game?`<button class="button full" data-action="resume">つづきから遊ぶ</button><button class="button light full" data-action="new">新しいゲーム</button>`:`<button class="button full" data-action="new">ゲームをはじめる</button>`}<button class="link-btn" data-action="rules">遊び方を読む</button></div>${restoreError?'<p class="error">保存したゲームを読み取れませんでした。新しく始めてください。</p>':''}</div></section>`;}
-function setup(){return `<div class="narrow sheet setup-sheet"><button class="link-btn" data-action="home">← タイトルへ</button><div class="space"><h1 class="h2 space-sm">プレイヤー設定</h1><p class="sub space-sm">時計回りに名前を入力してください。<br>名前は空欄でも遊べます。</p></div><div class="setup-controls"><div><label for="countSelect">人数</label><select id="countSelect">${[3,4,5,6].map(n=>`<option value="${n}" ${n===setupNames.length?'selected':''}>${n}人</option>`).join('')}</select></div><div><label for="lapsSelect">語り手の周回</label><select id="lapsSelect"><option value="1" ${laps===1?'selected':''}>1周 · ${setupNames.length}話</option><option value="2" ${laps===2?'selected':''}>2周 · ${setupNames.length*2}話</option></select></div></div><div class="setup-names">${setupNames.map((name,i)=>`<div class="name-row"><span>${GameArt.button(i)}</span><input data-player="${i}" aria-label="${i+1}人目の名前" placeholder="プレイヤー${i+1}（省略可）" value="${esc(name)}" maxlength="16" autocomplete="off"></div>`).join('')}</div><p class="error" id="setupError" role="alert"></p>${setupNames.length===3?'<p class="sub">3人のときは、語り手以外が2枚ずつ提出します。</p>':''}${dock('ゲームをはじめる','start',`<strong>${setupNames.length}人・${setupNames.length*laps}話</strong>`)}</div>`;}
+function setup(){return `<div class="narrow sheet setup-sheet"><button class="link-btn" data-action="home">← タイトルへ</button><div class="space"><h1 class="h2 space-sm">プレイヤー設定</h1><p class="sub space-sm">時計回りに名前を入力してください。<br>名前は空欄でも遊べます。</p></div><div class="setup-controls"><div><span id="playerCountLabel" class="setup-label">人数</span><div class="player-count-stepper" role="group" aria-labelledby="playerCountLabel"><button type="button" data-action="countDown" aria-label="人数を減らす" ${setupNames.length<=3?'disabled':''}>−</button><output aria-live="polite">${setupNames.length}人</output><button type="button" data-action="countUp" aria-label="人数を増やす" ${setupNames.length>=6?'disabled':''}>＋</button></div></div><div><label for="lapsSelect">語り手の周回</label><select id="lapsSelect"><option value="1" ${laps===1?'selected':''}>1周 · ${setupNames.length}話</option><option value="2" ${laps===2?'selected':''}>2周 · ${setupNames.length*2}話</option></select></div></div><div class="setup-names">${setupNames.map((name,i)=>`<div class="name-row"><span>${GameArt.button(i)}</span><input data-player="${i}" aria-label="${i+1}人目の名前" placeholder="プレイヤー${i+1}（省略可）" value="${esc(name)}" maxlength="16" autocomplete="off"></div>`).join('')}</div><p class="error" id="setupError" role="alert"></p>${setupNames.length===3?'<p class="sub">3人のときは、語り手以外が2枚ずつ提出します。</p>':''}${dock('ゲームをはじめる','start',`<strong>${setupNames.length}人・${setupNames.length*laps}話</strong>`)}</div>`;}
 function handoff(){
  const voters=game.role==='vote',eligible=game.role==='narrate'?[game.narrator]:E.others(game).filter(i=>voters?!Object.hasOwn(game.votes,i):!game.entries.some(e=>e.owner===i));
  if(!voters){const p=game.players[game.actor];return `${progress()}<section class="direct-handoff">${GameArt.person(game.actor)}<h1 class="h2">${esc(p.name)} さんへ</h1><p class="sub">本人が端末を受け取ってください。</p><button class="button" data-action="privateOpen" data-player="${game.actor}">本人です・開く</button></section>`;}
@@ -784,6 +784,8 @@ document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-action]');if(!b||b.disabled)return;
  const action=b.dataset.action;
  switch(action){
+ case 'countDown':
+ case 'countUp':{const n=setupNames.length+(action==='countUp'?1:-1);if(n>=3&&n<=6){setupNames=Array.from({length:n},(_,i)=>setupNames[i]||'');render({preserveScroll:true});}break;}
  case 'new':newSetup();break;
  case 'start':start();break;
  case 'home':goHome();break;
@@ -1144,10 +1146,24 @@ html body .story-teller .teller-name{font-size:14px!important;line-height:1.5!im
 /* Older ID-scoped material rules must not override the selected charcoal theme. */
 @layer dixitPaletteFinish{
  html,html body{background-color:#242628!important}
- html body{background-image:none!important}
+ html body:not([data-screen=home]){background-image:none!important}
  html body #dockHost,html body #dockHost .dock,html body #worldToolbar,html body .session-dialog,html body .portrait-dialog{background:#242628!important;color:#f2ead9!important}
  html body .button:not(.light),html body #confirmOk{background:#d4bd88!important;color:#242628!important;border-color:#d4bd88!important;box-shadow:none!important}
  html body .button.light,html body .session-secondary,html body #confirmDialog [data-action=confirmCancel]{background:transparent!important;color:#f2ead9!important;border-color:#69665c!important;box-shadow:none!important}
  html body .session-open-private{background:#35383a!important;color:#f2ead9!important}
+}
+</style><style id="dixit-setup-v19">@layer dixitSetupFinish{
+ html body[data-screen=home]::before{background:linear-gradient(0deg,#242628 0%,#242628d9 30%,#24262800 68%)!important}
+ html body .setup-names .name-row input{box-sizing:border-box!important;border:1px solid #807d73!important;border-radius:6px!important;background:#35383a!important;color:#f2ead9!important;min-height:48px!important;padding:10px 12px!important;line-height:1.5!important;box-shadow:none!important}
+ html body .setup-names .name-row input:focus-visible{border-color:#d4bd88!important;outline:2px solid #d4bd88!important;outline-offset:2px!important}
+ html body .setup-controls{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important}
+ html body .setup-controls>div{display:grid!important;grid-template-columns:minmax(0,1fr) 152px!important;gap:12px!important;align-items:center!important;min-width:0!important}
+ html body .setup-controls label,html body .setup-controls .setup-label{font-size:13px!important;line-height:1.5!important;font-weight:700!important;white-space:nowrap!important;letter-spacing:0!important;margin:0!important;color:#beb9ae!important}
+ html body .setup-controls select{width:152px!important;box-sizing:border-box!important;min-height:48px!important;margin:0!important;padding:8px!important}
+ html body .player-count-stepper{display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px!important;gap:8px!important;width:152px!important;align-items:center!important}
+ html body .player-count-stepper button{display:flex!important;align-items:center!important;justify-content:center!important;width:44px!important;min-height:48px!important;height:48px!important;padding:0!important;border:1px solid #807d73!important;border-radius:6px!important;background:#35383a!important;color:#f2ead9!important;font-size:22px!important;line-height:1!important;box-shadow:none!important;touch-action:manipulation!important}
+ html body .player-count-stepper button:disabled{opacity:.35!important;cursor:default!important}
+ html body .player-count-stepper output{text-align:center!important;font-size:17px!important;line-height:1.5!important;font-weight:700!important;color:#f2ead9!important;white-space:nowrap!important}
+ @media(max-width:799px){html body .setup-controls{grid-template-columns:1fr!important;gap:12px!important}}
 }
 </style></body></html>
