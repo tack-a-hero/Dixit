@@ -635,7 +635,7 @@ function progress(){
  const at=['narrate','submit','gallery','groupVote','reveal','result','finish'].indexOf(phase);
  const step=at<=0?0:at===1?1:at<=3?2:3;
  const scores=['gallery','groupVote','reveal','result','finish'].includes(game.phase)?'<div class="story-scores-inline" aria-label="現在の得点">'+game.players.map((p,i)=>'<span title="'+esc(p.name)+'">'+GameArt.person(i)+'<small>'+esc(p.name)+'</small><b>'+p.score+'</b></span>').join('')+'</div>':'';
- return `<div class="story-progress"><span class="story-round">第<b>${game.round}</b>話<small>全${game.maxRounds}話</small></span><ol class="story-steps" aria-label="ラウンドの進行">${['語る','集める','投票','発表'].map((label,i)=>`<li class="${i===step?'active':i<step?'done':''}" ${i===step?'aria-current="step"':''}><span class="step-name">${label}</span></li>`).join('')}</ol><span class="story-teller">${GameArt.person(game.narrator)}語り手　${esc(game.players[game.narrator].name)}</span></div>${scores}`;
+ return `<div class="story-progress"><span class="story-round">第<b>${game.round}</b>話<small>全${game.maxRounds}話</small></span><ol class="story-steps" aria-label="ラウンドの進行">${['語る','集める','投票','発表'].map((label,i)=>`<li class="${i===step?'active':i<step?'done':''}" ${i===step?'aria-current="step"':''}><span class="step-name">${label}</span></li>`).join('')}</ol><span class="story-teller">${GameArt.person(game.narrator)}<span class="teller-copy"><span class="teller-role">語り手</span><b class="teller-name">${esc(game.players[game.narrator].name)}</b></span></span></div>${scores}`;
 }
 function hint(){return `<div class="hint"><span class="eyebrow">ヒント</span><p>「${esc(game.hint)}」</p></div>`;}
 function artGrid(ids,mode){
@@ -759,7 +759,7 @@ function boardHTML(){
  for(let v=0;v<=max;v++){const r=Math.floor(v/cols),c=r%2?cols-1-v%cols:v%cols,here=ps.map((p,i)=>p.score===v?i:-1).filter(i=>i>=0);
   cells.push(`<li class="tk-cell ${v%5===0?'five':''}" style="grid-row:${r+1};grid-column:${c+1}"><span class="tk-n">${v}</span>${here.length?`<span class="tk-pawns">${here.map(i=>`<i class="tk-pawn" style="--player-colour:${PLAYER_COLOURS[i]}" title="${esc(ps[i].name)}">${i+1}</i>`).join('')}</span>`:''}</li>`);}
  const ph=game.phase==='handoff'?game.role:game.phase,showHint=!!game.hint&&['submit','gallery','groupVote','vote','reveal','result'].includes(ph);
- return `<div class="bd-wrap"><div class="bd-top"><h2 id="boardTitle"><img src="${ART.emblem}" alt="">Dixit</h2><div class="bd-head"><span class="story-round">第<b>${game.round}</b>話<small>全${game.maxRounds}話</small></span><span class="story-teller">${GameArt.person(game.narrator)}語り手　${esc(ps[game.narrator].name)}</span></div></div>${showHint?`<p class="bd-hint">「${esc(game.hint)}」</p>`:''}<div class="bd-board"><ol class="track" aria-label="得点トラック">${cells.join('')}</ol></div><ul class="bd-legend">${ps.map((p,i)=>`<li>${GameArt.person(i)}<i class="tk-pawn" style="--player-colour:${PLAYER_COLOURS[i]}">${i+1}</i><span>${esc(p.name)}</span><b>${p.score}</b></li>`).join('')}</ul><div class="bd-foot"><button class="button light" data-action="boardClose">手元の画面に戻る</button></div></div>`;
+ return `<div class="bd-wrap"><div class="bd-top"><h2 id="boardTitle"><img src="${ART.emblem}" alt="">Dixit</h2><div class="bd-head"><span class="story-round">第<b>${game.round}</b>話<small>全${game.maxRounds}話</small></span><span class="story-teller">${GameArt.person(game.narrator)}<span class="teller-copy"><span class="teller-role">語り手</span><b class="teller-name">${esc(ps[game.narrator].name)}</b></span></span></div></div>${showHint?`<p class="bd-hint">「${esc(game.hint)}」</p>`:''}<div class="bd-board"><ol class="track" aria-label="得点トラック">${cells.join('')}</ol></div><ul class="bd-legend">${ps.map((p,i)=>`<li>${GameArt.person(i)}<i class="tk-pawn" style="--player-colour:${PLAYER_COLOURS[i]}">${i+1}</i><span>${esc(p.name)}</span><b>${p.score}</b></li>`).join('')}</ul><div class="bd-foot"><button class="button light" data-action="boardClose">手元の画面に戻る</button></div></div>`;
 }
 function showBoard(){if(!game)return;lockPrivate();closeDialogs();$('#boardBody').innerHTML=boardHTML();$('#boardDialog').showModal();}
 function showRules(){
@@ -1136,4 +1136,18 @@ html body .story-scores-inline .art-person{display:inline-block!important;width:
 html body .story-scores-inline small{min-width:0;flex:1;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere;font-size:11px;line-height:1.5}
 html body .story-scores-inline b{margin-left:auto}
 @media(min-width:700px){html body .story-scores-inline>span{flex-basis:calc(25% - 8px)}}
+</style><style id="portrait-radius-v18">html body .art-person,html body .portrait-choice,html body .session-face,html body .session-face img,html body .lobby-icon,html body img.player-icon{border-radius:6px!important}html body .portrait-choice,html body .session-face{overflow:hidden!important}</style><style id="teller-alignment-v18">html body .story-teller{display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;align-items:center!important;justify-content:start!important;gap:8px!important;min-width:0!important;text-indent:0!important}
+html body .story-teller .art-person{width:28px!important;height:34px!important;display:block!important;margin:0!important;vertical-align:initial!important;align-self:center!important}
+html body .story-teller .teller-copy{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+html body .story-teller .teller-role{font-size:11px!important;line-height:1.5!important;color:var(--dixit-muted)!important;white-space:nowrap}
+html body .story-teller .teller-name{font-size:14px!important;line-height:1.5!important;font-weight:700!important;color:var(--dixit-ink)!important;white-space:normal;overflow-wrap:anywhere;min-width:0}
+/* Older ID-scoped material rules must not override the selected charcoal theme. */
+@layer dixitPaletteFinish{
+ html,html body{background-color:#242628!important}
+ html body{background-image:none!important}
+ html body #dockHost,html body #dockHost .dock,html body #worldToolbar,html body .session-dialog,html body .portrait-dialog{background:#242628!important;color:#f2ead9!important}
+ html body .button:not(.light),html body #confirmOk{background:#d4bd88!important;color:#242628!important;border-color:#d4bd88!important;box-shadow:none!important}
+ html body .button.light,html body .session-secondary,html body #confirmDialog [data-action=confirmCancel]{background:transparent!important;color:#f2ead9!important;border-color:#69665c!important;box-shadow:none!important}
+ html body .session-open-private{background:#35383a!important;color:#f2ead9!important}
+}
 </style></body></html>
