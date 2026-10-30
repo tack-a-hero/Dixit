@@ -1122,6 +1122,7 @@ html body #dockHost .dock-summary img{width:24px!important;height:32px!important
 </script><style id="dixit-charcoal-theme">/* One charcoal material family; retain the existing illustrations and portrait atlas. */
 html{--dixit-ground:#242628;--dixit-surface:#2d3032;--dixit-raised:#35383a;--dixit-ink:#f2ead9;--dixit-muted:#beb9ae;--dixit-line:#69665c;--dixit-accent:#d4bd88;--identity-surface:#35383a;--identity-text:#f2ead9;--identity-muted:#beb9ae;--identity-line:#69665c}
 html,html body{background-color:var(--dixit-ground)!important;color:var(--dixit-ink)!important}
+html body{--ui-bg:#242628!important;--ui-panel:#2d3032!important;--ui-ink:#f2ead9!important;--ui-muted:#beb9ae!important;--ui-line:#69665c!important;--ui-accent:#d4bd88!important;--identity-paper:#35383a!important;--identity-ink:#f2ead9!important;--identity-muted:#beb9ae!important;--bg:#242628!important;--surface:#2d3032!important;--surface-2:#35383a!important;--raised:#35383a!important;--panel:#2d3032!important;--panel-2:#35383a!important;--pale:#35383a!important;--text:#f2ead9!important;--muted:#beb9ae!important;--line:#69665c!important}
 html body{background-image:none!important}
 html body #worldToolbar,html body .dock,html body .session-dialog,html body .portrait-dialog,html body .dialog,html body .modal,html body .group-ballot{background:var(--dixit-ground)!important;color:var(--dixit-ink)!important}
 html body .sheet,html body .story-table,html body .setup-names .name-row,html body .session-seat,html body .group-voter,html body .story-scores-inline,html body .selection-tray{background-color:var(--dixit-surface)!important;color:var(--dixit-ink)!important}
@@ -1134,4 +1135,5 @@ html body .story-scores-inline>span{display:flex;align-items:center;gap:6px;min-
 html body .story-scores-inline .art-person{display:inline-block!important;width:24px!important;height:30px!important;flex:none!important;opacity:1!important}
 html body .story-scores-inline small{min-width:0;overflow-wrap:anywhere;font-size:11px}
 html body .story-scores-inline b{margin-left:auto}
+@media(min-width:700px){html body .story-scores-inline>span{flex-basis:calc(25% - 8px)}}
 </style></body></html>
